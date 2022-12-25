@@ -4,8 +4,5 @@
     ModemInfo
  <br>
 </h2>
-<h3 align="center">
-    designed for the
-    <a href="https://github.com/koshev-msk/modemfeed/tree/master/luci/applications/luci-app-modeminfo">luci-app-modeminfo </a>
-    backend.
- </h3>
+designed for the <a href="https://github.com/koshev-msk/modemfeed/tree/master/luci/applications/luci-app-modeminfo">luci-app-modeminfo </a> backend.
+
