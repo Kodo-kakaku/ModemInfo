@@ -862,8 +862,6 @@ void ModemInfoQmi::release_client_ready(QmiDevice *dev, GAsyncResult *res) {
     GError *error = nullptr;
     if (!qmi_device_release_client_finish(dev, res, &error)) {
         g_error_free(error);
-    } else {
-        std::cerr << "Client released" << std::endl;
     }
     clear_connection();
 }
