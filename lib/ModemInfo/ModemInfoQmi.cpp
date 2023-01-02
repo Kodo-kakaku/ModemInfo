@@ -16,7 +16,7 @@
 // 3) mode=$MODE +
 // 4) csq_per=$CSQ_PER
 // 5) lac=$LAC +
-// 6) cid=$CID
+// 6) cid=$CID +
 // 7) rssi=$CSQ_RSSI +
 // 8) sinr=$SINR +
 // 9) rsrp=$RSRP +
@@ -30,7 +30,7 @@
 // 17) lteca=$LTE_CA
 // 18) enbid=$ENBID
 // 19) distance=$DISTANCE +
-// 20) cell=$CELL
+// 20) cell=$CELL +
 // 21) scc=$SCC
 // 22) bwca=$BWCA
 // 23) iccid=$ICCID +
@@ -39,12 +39,10 @@
 
 /*
  * {
-	"csq_per": "60", +
+	"csq_per": "60",
 	"csq_col": "orange",
 	"bwdl": "--",
 	"lteca": "0",
-	"enbid": "912295",
-	"cell": "1", +
 	"scc": "",
 	"bwca": "",
 	"imsi": "--", -- qmi no
@@ -416,24 +414,25 @@ void ModemInfoQmi::get_serving_system_ready(QmiClientNas *client, GAsyncResult *
     std::string hex;
     if(qmi_message_nas_get_serving_system_output_get_cid_3gpp(output, &cid, nullptr)) {
         sprintf(hex.data(), "%x", cid);
+        const auto len = strlen(hex.c_str());
         set_json_field("cid", hex);
         set_json_field("cid_num", cid);
+
+        if(len > 2) {
+            set_json_field("cell", &hex[len - 2]);
+            hex[len - 2] = '\0';
+            set_json_field("enbid", &hex[0]);
+        } else {
+            set_json_field("cell", "-");
+            set_json_field("enbid", "-");
+        }
         hex.clear();
     } else {
         set_json_field("cid", "-");
         set_json_field("cell", "-");
+        set_json_field("enbid", "-");
         set_json_field("cid_num", "-");
     }
-
-    //guint16 tac;
-    //bool lac_f = true;
-   // if (qmi_message_nas_get_serving_system_output_get_lte_tac(
-          //  output,
-         //   &tac,
-        //    nullptr)) {
-       // lac_f = false;
-       // set_json_field("lac", tac);
-   // }
 
     guint16 lac;
     if (qmi_message_nas_get_serving_system_output_get_lac_3gpp(
@@ -448,7 +447,6 @@ void ModemInfoQmi::get_serving_system_ready(QmiClientNas *client, GAsyncResult *
         set_json_field("lac_num", "-");
     }
 
-    //if (lac_f) { set_json_field("lac", "-"); }
     qmi_message_nas_get_serving_system_output_unref(output);
 }
 
@@ -734,7 +732,7 @@ void ModemInfoQmi::get_lte_cphy_ca_info_ready(QmiClientNas *client, GAsyncResult
     guint8 scell_index;
     GArray *array;
 
-    short bwdl = -1;
+    short bwdl = 0;
     if (qmi_message_nas_get_lte_cphy_ca_info_output_get_phy_ca_agg_pcell_info(
             output,
             &pci,
@@ -865,7 +863,7 @@ void ModemInfoQmi::release_client_ready(QmiDevice *dev, GAsyncResult *res) {
     if (!qmi_device_release_client_finish(dev, res, &error)) {
         g_error_free(error);
     } else {
-        g_debug ("Client released");
+        std::cerr << "Client released" << std::endl;
     }
     clear_connection();
 }
