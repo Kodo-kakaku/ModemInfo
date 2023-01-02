@@ -860,9 +860,7 @@ void ModemInfoQmi::qmicli_async_nas_operation_done() {
 
 void ModemInfoQmi::release_client_ready(QmiDevice *dev, GAsyncResult *res) {
     GError *error = nullptr;
-    if (!qmi_device_release_client_finish(dev, res, &error)) {
-        g_error_free(error);
-    }
+    if (!qmi_device_release_client_finish(dev, res, &error)) { g_error_free(error); }
     clear_connection();
 }
 
