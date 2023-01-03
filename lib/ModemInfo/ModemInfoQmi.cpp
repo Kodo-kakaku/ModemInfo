@@ -708,17 +708,18 @@ void ModemInfoQmi::get_rf_band_info_ready(QmiClientNas *client, GAsyncResult *re
     qmi_message_nas_get_rf_band_information_output_unref(output);
 }
 
-// TODO add some value to json ( vector or string )
 void ModemInfoQmi::get_lte_cphy_ca_info_ready(QmiClientNas *client, GAsyncResult *res) {
     GError *error = nullptr;
     auto output = qmi_client_nas_get_lte_cphy_ca_info_finish(client, res, &error);
     if (!output) {
-        set_json_field("bwdl",  "-");
+        set_json_field("bwdl", "-");
+        set_json_field("scc",  "-");
         g_error_free(error);
         return;
     }
     if (!qmi_message_nas_get_lte_cphy_ca_info_output_get_result(output, &error)) {
-        set_json_field("bwdl",  "-");
+        set_json_field("bwdl", "-");
+        set_json_field("scc",  "-");
         g_error_free(error);
         qmi_message_nas_get_lte_cphy_ca_info_output_unref(output);
         return;
@@ -729,7 +730,6 @@ void ModemInfoQmi::get_lte_cphy_ca_info_ready(QmiClientNas *client, GAsyncResult
     QmiNasDLBandwidth dl_bandwidth;
     QmiNasActiveBand band;
     QmiNasScellState state;
-    guint8 scell_index;
     GArray *array;
 
     short bwdl = 0;
@@ -768,30 +768,14 @@ void ModemInfoQmi::get_lte_cphy_ca_info_ready(QmiClientNas *client, GAsyncResult
     }
     bwdl ? set_json_field("bwdl",  bwdl) : set_json_field("bwdl",  "-");
 
-    /* SECONDARY CELL
+    std::vector<std::string> secondary_band;
     if (qmi_message_nas_get_lte_cphy_ca_info_output_get_phy_ca_agg_secondary_cells(
             output, &array, nullptr)) {
-        guint i;
-
-        if (!array->len)
-            g_print("No Secondary Cells\n");
-        for (i = 0; i < array->len; i++) {
+        for (size_t i = 0; i < array->len; ++i) {
             QmiMessageNasGetLteCphyCaInfoOutputPhyCaAggSecondaryCellsSsc *e;
             e = &g_array_index (array, QmiMessageNasGetLteCphyCaInfoOutputPhyCaAggSecondaryCellsSsc, i);
-            g_print("Secondary Cell %u Info\n"
-                    "\tPhysical Cell ID: '%" G_GUINT16_FORMAT"'\n"
-                    "\tRX Channel: '%" G_GUINT16_FORMAT"'\n"
-                    "\tDL Bandwidth: '%s'\n"
-                    "\tLTE Band: '%s'\n"
-                    "\tState: '%s'\n"
-                    "\tCell index: '%u'\n",
-                    i + 1, e->physical_cell_id, e->rx_channel,
-                    qmi_nas_dl_bandwidth_get_string(e->dl_bandwidth),
-                    qmi_nas_active_band_get_string(e->lte_band),
-                    qmi_nas_scell_state_get_string(e->state),
-                    e->cell_index);
+            secondary_band.emplace_back(qmi_nas_active_band_get_string(e->lte_band));
         }
-
     } else {
         if (qmi_message_nas_get_lte_cphy_ca_info_output_get_phy_ca_agg_scell_info(
                 output,
@@ -801,26 +785,13 @@ void ModemInfoQmi::get_lte_cphy_ca_info_ready(QmiClientNas *client, GAsyncResult
                 &band,
                 &state,
                 nullptr)) {
-            g_print("Secondary Cell Info\n");
-            g_print("\tPhysical Cell ID: '%" G_GUINT16_FORMAT"'\n"
-                    "\tRX Channel: '%" G_GUINT16_FORMAT"'\n"
-                    "\tDL Bandwidth: '%s'\n"
-                    "\tLTE Band: '%s'\n"
-                    "\tState: '%s'\n",
-                    pci, channel,
-                    qmi_nas_dl_bandwidth_get_string(dl_bandwidth),
-                    qmi_nas_active_band_get_string(band),
-                    qmi_nas_scell_state_get_string(state));
-        }
-
-        if (qmi_message_nas_get_lte_cphy_ca_info_output_get_scell_index(
-                output,
-                &scell_index,
-                nullptr)) {
-            g_print("Secondary Cell index: '%u'\n", scell_index);
+            secondary_band.emplace_back(qmi_nas_active_band_get_string(band));
         }
     }
-     */
+
+    if(!secondary_band.empty()) {
+        set_json_field("scc", secondary_band);
+    }
 
     qmi_message_nas_get_lte_cphy_ca_info_output_unref(output);
 }
