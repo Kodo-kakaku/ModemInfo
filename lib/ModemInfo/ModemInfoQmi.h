@@ -10,6 +10,7 @@
 #define MODEMINFO_MODEMINFOQMI_H
 
 #include "ModemInfo.h"
+#include <numeric>
 #include <cmath>
 
 extern "C" {

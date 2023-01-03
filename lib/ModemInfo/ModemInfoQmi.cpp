@@ -24,33 +24,26 @@
 // 11) reg=$REGST +
 // 12) csq_col=$CSQ_COL
 // 13) arfcn=$EARFCN +
-// 14) chiptemp=$CHIPTEMP
+// 14) chiptemp=$CHIPTEMP -
 // 15) firmware=$FW +
-// 16) bwdl=$BWDL
+// 16) bwdl=$BWDL +
 // 17) lteca=$LTE_CA
-// 18) enbid=$ENBID
+// 18) enbid=$ENBID +
 // 19) distance=$DISTANCE +
 // 20) cell=$CELL +
-// 21) scc=$SCC
+// 21) scc=$SCC +
 // 22) bwca=$BWCA
 // 23) iccid=$ICCID +
-// 24) imsi=$IMSI
+// 24) imsi=$IMSI +
 // 25) pci=$PCI +
 
 /*
  * {
 	"csq_per": "60",
 	"csq_col": "orange",
-	"bwdl": "--",
 	"lteca": "0",
-	"scc": "",
 	"bwca": "",
-	"imsi": "--", -- qmi no
 }
-
- TODO cell 0x01? DEBA701 -> 0x01
- *
- *
  */
 
 /*
@@ -412,13 +405,13 @@ void ModemInfoQmi::get_serving_system_ready(QmiClientNas *client, GAsyncResult *
 
     guint32 cid;
     std::string hex;
-    if(qmi_message_nas_get_serving_system_output_get_cid_3gpp(output, &cid, nullptr)) {
+    if (qmi_message_nas_get_serving_system_output_get_cid_3gpp(output, &cid, nullptr)) {
         sprintf(hex.data(), "%x", cid);
         const auto len = strlen(hex.c_str());
         set_json_field("cid", hex);
         set_json_field("cid_num", cid);
 
-        if(len > 2) {
+        if (len > 2) {
             set_json_field("cell", &hex[len - 2]);
             hex[len - 2] = '\0';
             set_json_field("enbid", &hex[0]);
@@ -466,7 +459,7 @@ void ModemInfoQmi::get_signal_info_ready(QmiClientNas *client, GAsyncResult *res
     }
 
     const auto csq_per = [](int rssi) {
-        return (100*(1-(-50 - rssi)/(-50 - -120)));
+        return (100 * (1 - (-50 - rssi) / (-50 - -120)));
     };
 
     /* CDMA... */
@@ -665,7 +658,7 @@ void ModemInfoQmi::get_cell_location_info_ready(QmiClientNas *client, GAsyncResu
             &latitude,
             &longitude,
             nullptr)) {
-        set_json_field("latitude",  (static_cast<double>(latitude)  * 0.25) / 3600.0);
+        set_json_field("latitude", (static_cast<double>(latitude) * 0.25) / 3600.0);
         set_json_field("longitude", (static_cast<double>(longitude) * 0.25) / 3600.0);
     } else {
         set_json_field("latitude", "-");
@@ -713,12 +706,14 @@ void ModemInfoQmi::get_lte_cphy_ca_info_ready(QmiClientNas *client, GAsyncResult
     auto output = qmi_client_nas_get_lte_cphy_ca_info_finish(client, res, &error);
     if (!output) {
         set_json_field("bwdl", "-");
+        set_json_field("bwca", "-");
         set_json_field("scc",  "-");
         g_error_free(error);
         return;
     }
     if (!qmi_message_nas_get_lte_cphy_ca_info_output_get_result(output, &error)) {
         set_json_field("bwdl", "-");
+        set_json_field("bwca", "-");
         set_json_field("scc",  "-");
         g_error_free(error);
         qmi_message_nas_get_lte_cphy_ca_info_output_unref(output);
@@ -732,29 +727,26 @@ void ModemInfoQmi::get_lte_cphy_ca_info_ready(QmiClientNas *client, GAsyncResult
     QmiNasScellState state;
     GArray *array;
 
-    short bwdl = 0;
-    if (qmi_message_nas_get_lte_cphy_ca_info_output_get_phy_ca_agg_pcell_info(
-            output,
-            &pci,
-            &channel,
-            &dl_bandwidth,
-            &band,
-            nullptr)) {
+    std::vector<short> bwca;
+    std::vector<std::string> s_band;
+
+    const auto qmi_nas_dl_bandwidth = [](QmiNasDLBandwidth dl_bandwidth) {
+        short band = 0;
         switch (dl_bandwidth) {
             case QMI_NAS_DL_BANDWIDTH_3:
-                bwdl = 1;
+                band = 3;
                 break;
             case QMI_NAS_DL_BANDWIDTH_5:
-                bwdl = 2;
+                band = 5;
                 break;
             case QMI_NAS_DL_BANDWIDTH_10:
-                bwdl = 3;
+                band = 10;
                 break;
             case QMI_NAS_DL_BANDWIDTH_15:
-                bwdl = 4;
+                band = 15;
                 break;
             case QMI_NAS_DL_BANDWIDTH_20:
-                bwdl = 5;
+                band = 20;
                 break;
             case QMI_NAS_DL_BANDWIDTH_1_4:
                 break;
@@ -765,34 +757,46 @@ void ModemInfoQmi::get_lte_cphy_ca_info_ready(QmiClientNas *client, GAsyncResult
             default:
                 break;
         }
-    }
-    bwdl ? set_json_field("bwdl",  bwdl) : set_json_field("bwdl",  "-");
+        return band;
+    };
 
-    std::vector<std::string> secondary_band;
+    if (qmi_message_nas_get_lte_cphy_ca_info_output_get_phy_ca_agg_pcell_info(
+            output,
+            &pci,
+            &channel,
+            &dl_bandwidth,
+            &band,
+            nullptr)) {
+        dl_bandwidth != 6 && dl_bandwidth != 255 ?
+        set_json_field("bwdl", dl_bandwidth) : set_json_field("bwdl", "-");
+        bwca.push_back(qmi_nas_dl_bandwidth(dl_bandwidth));
+    }
+
     if (qmi_message_nas_get_lte_cphy_ca_info_output_get_phy_ca_agg_secondary_cells(
-            output, &array, nullptr)) {
+                    output, &array,
+                    nullptr)) {
         for (size_t i = 0; i < array->len; ++i) {
             QmiMessageNasGetLteCphyCaInfoOutputPhyCaAggSecondaryCellsSsc *e;
             e = &g_array_index (array, QmiMessageNasGetLteCphyCaInfoOutputPhyCaAggSecondaryCellsSsc, i);
-            secondary_band.emplace_back(qmi_nas_active_band_get_string(e->lte_band));
+            s_band.emplace_back(qmi_nas_active_band_get_string(e->lte_band));
+            bwca.push_back(qmi_nas_dl_bandwidth(dl_bandwidth));
         }
     } else {
         if (qmi_message_nas_get_lte_cphy_ca_info_output_get_phy_ca_agg_scell_info(
-                output,
-                &pci,
-                &channel,
-                &dl_bandwidth,
-                &band,
-                &state,
-                nullptr)) {
-            secondary_band.emplace_back(qmi_nas_active_band_get_string(band));
+                        output,
+                        &pci,
+                        &channel,
+                        &dl_bandwidth,
+                        &band,
+                        &state,
+                        nullptr)) {
+            s_band.emplace_back(qmi_nas_active_band_get_string(band));
+            bwca.push_back(qmi_nas_dl_bandwidth(dl_bandwidth));
         }
     }
 
-    if(!secondary_band.empty()) {
-        set_json_field("scc", secondary_band);
-    }
-
+    !s_band.empty() ? set_json_field("scc", s_band) : set_json_field("scc", "-");
+    !bwca.empty() ? set_json_field("bwca", std::reduce(bwca.begin(), bwca.end())) : set_json_field("bwca", "-");
     qmi_message_nas_get_lte_cphy_ca_info_output_unref(output);
 }
 
