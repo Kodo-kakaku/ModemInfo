@@ -14,7 +14,7 @@
 // 1) device=$DEVICE +
 // 2) cops=$COPS (MEGAFON FOR EXAMPLE) +
 // 3) mode=$MODE +
-// 4) csq_per=$CSQ_PER
+// 4) csq_per=$CSQ_PER +
 // 5) lac=$LAC +
 // 6) cid=$CID +
 // 7) rssi=$CSQ_RSSI +
@@ -32,19 +32,10 @@
 // 19) distance=$DISTANCE +
 // 20) cell=$CELL +
 // 21) scc=$SCC +
-// 22) bwca=$BWCA
+// 22) bwca=$BWCA +
 // 23) iccid=$ICCID +
 // 24) imsi=$IMSI +
 // 25) pci=$PCI +
-
-/*
- * {
-	"csq_per": "60",
-	"csq_col": "orange",
-	"lteca": "0",
-	"bwca": "",
-}
- */
 
 /*
  * -------------------------------------------------------------
@@ -459,7 +450,7 @@ void ModemInfoQmi::get_signal_info_ready(QmiClientNas *client, GAsyncResult *res
     }
 
     const auto csq_per = [](int rssi) {
-        return (100 * (1 - (-50 - rssi) / (-50 - -120)));
+        return 100 * (1 - (-50 - rssi) / (-50 - -120));
     };
 
     /* CDMA... */
@@ -767,14 +758,14 @@ void ModemInfoQmi::get_lte_cphy_ca_info_ready(QmiClientNas *client, GAsyncResult
             &dl_bandwidth,
             &band,
             nullptr)) {
-        dl_bandwidth != 6 && dl_bandwidth != 255 ?
-        set_json_field("bwdl", dl_bandwidth) : set_json_field("bwdl", "-");
+        dl_bandwidth != 6 && dl_bandwidth != 255 ? set_json_field("bwdl", dl_bandwidth) : set_json_field("bwdl", "-");
         bwca.push_back(qmi_nas_dl_bandwidth(dl_bandwidth));
     }
 
     if (qmi_message_nas_get_lte_cphy_ca_info_output_get_phy_ca_agg_secondary_cells(
-                    output, &array,
-                    nullptr)) {
+            output,
+            &array,
+            nullptr)) {
         for (size_t i = 0; i < array->len; ++i) {
             QmiMessageNasGetLteCphyCaInfoOutputPhyCaAggSecondaryCellsSsc *e;
             e = &g_array_index (array, QmiMessageNasGetLteCphyCaInfoOutputPhyCaAggSecondaryCellsSsc, i);
@@ -797,6 +788,8 @@ void ModemInfoQmi::get_lte_cphy_ca_info_ready(QmiClientNas *client, GAsyncResult
 
     !s_band.empty() ? set_json_field("scc", s_band) : set_json_field("scc", "-");
     !bwca.empty() ? set_json_field("bwca", std::reduce(bwca.begin(), bwca.end())) : set_json_field("bwca", "-");
+
+    set_json_field("lteca", s_band.size());
     qmi_message_nas_get_lte_cphy_ca_info_output_unref(output);
 }
 
