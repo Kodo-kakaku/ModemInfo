@@ -4,6 +4,4 @@
 backend. Goal of the project is to provide a user-friendly interface for receiving information from 3G/LTE dongle.
 
 ## Features
-The main task of the backend is to request data about hardware and modem signal,
-the result is returned in JSON format. Now it is implemented to receive data from modem 
-using serial port AT commands or using the QMI interface.
+Main task of the server part is to request data about the equipment and the modem signal. The problem with using modem is the lack of any standardization of commands for receiving data from the modem (each vendor uses its own commands). Now it is implemented to receive data from the modem using the serial port via AT commands or using the [QMI](https://en.wikipedia.org/wiki/Qualcomm_MSM_Interface) interface. The response is returned in a JSON format that can be studied, parsed with a script or sent to the user interface, now all information about the modem is available to you!
