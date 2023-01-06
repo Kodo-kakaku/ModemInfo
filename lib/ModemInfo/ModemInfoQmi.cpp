@@ -4,6 +4,7 @@
  * -------------------------------------------------------------
  * -- Copyright 2022-2023 Vladislav Kadulin <spanky@yandex.ru>
  * -- Licensed to the GNU General Public License v3.0
+ *
 */
 
 #include "ModemInfoQmi.h"
