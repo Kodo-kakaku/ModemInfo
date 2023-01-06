@@ -12,5 +12,5 @@ To work in this mode, you must specify the name of the mode and the port. This i
 ```
 For example:
 ./ModemInfo --qmi -d /dev/cdc-wdm0
-{"imei":"0000000000000000","manufacturer":"Quectel","model":"EP06-E","firmware":"EP06ELAR04A04M4G","iccid":"-","reg":"registered","cops":"Your operator","cops_mcc":250,"cops_mnc":2,"cid":"bc8e105","cid_num":197714181,"cell":"05","enbid":"bc8e1","lac":"fffe","lac_num":65534,"mode":"LTE","rssi":-72,"csq_per":100,"rsrq":-11,"rsrp":-104,"sinr":3,"pci":224,"distance":"-","latitude":"-","longitude":"-","arfcn":[1602],"bwdl":5,"scc":["eutran-7"],"bwca":40,"lteca":1}
+{"imei":"0000000000000000","manufacturer":"Quectel","model":"EP06-E","firmware":"EP06ELAR04A04M4G","iccid":"-","reg":"registered", ...etc}
 ```
