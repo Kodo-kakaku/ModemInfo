@@ -29,3 +29,17 @@ For example:
 ./ModemInfo --at -d /dev/ttyUSB2 -f /usr/share/quectel.json
 {"device":["Quectel","EP06"],"imei":"xxxxx","imsi":"xxxxx","iccid":"+ICCID: xxxx","firmware":"EP06ELAR04A04M4G","chiptemp":"+QTEMP: 31,31,30", ...etc}
 ```
+
+## Other Features
+- You can request data about hardware or network separately!
+```
+For example:
+./ModemInfo --network --qmi -d /dev/cdc-wdm0
+./ModemInfo --hardware --at -d /dev/ttyUSB2 -f /www/quectel.json
+```
+- And of course it's pretty to print!
+```
+For example:
+./ModemInfo --pretty --network --qmi -d /dev/cdc-wdm0
+./ModemInfo -p --hardware --at -d /dev/ttyUSB2 -f /www/quectel.json
+```
