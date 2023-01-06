@@ -47,3 +47,42 @@ For example:
 ./ModemInfo --pretty --network --qmi -d /dev/cdc-wdm0
 ./ModemInfo -p --hardware --at -d /dev/ttyUSB2 -f /www/quectel.json
 ```
+## How to build
+```
+# Download OpenWRT if it's not already done
+cd openwrt
+# Install packages from feeds
+./scripts/feeds update -a
+./scripts/feeds install -a
+make menuconfig
+# select latest C++ compiler
+# Advanced configuration options (for developers)  ---> [*]   Toolchain Options  ---> GCC compiler Version (gcc 10.x)
+make
+cd
+
+# Install the package manually
+git clone https://github.com/Kodo-kakaku/ModemInfo
+mkdir openwrt/package/modeminfo
+mkdir openwrt/package/modeminfo/build
+cp -rf ModemInfo/openwrt-cmake/build* openwrt/
+cp -rf ModemInfo/openwrt-cmake/Toolchain-mips.cmake openwrt/
+cp -rf ModemInfo/src/ openwrt/package/modeminfo/build/
+cp -rf ModemInfo/lib/ openwrt/package/modeminfo/build/
+cp -rf ModemInfo/Makefile openwrt/package/modeminfo/
+cp -rf ModemInfo/config.h.in openwrt/package/modeminfo/build/
+cp -rf ModemInfo/CMakeLists.txt openwrt/package/modeminfo/build/
+
+cd openwrt
+make defconfig
+make
+
+#That's All!
+```
+
+## Credits
+- [libqmi](https://github.com/freedesktop/libqmi)
+- [cJSON](https://github.com/DaveGamble/cJSON)
+- [GLib – 2.0](https://docs.gtk.org/glib/index.html)
+
+## License
+ModemInfo like OpenWRT is released under the GPL v3.0 License - see detailed [LICENSE](https://github.com/Kodo-kakaku/ModemInfo/blob/main/LICENSE).

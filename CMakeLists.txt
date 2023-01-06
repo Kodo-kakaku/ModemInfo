@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(VERSION 1.7)
-project(ModemInfo VERSION ${VERSION}
+set(VERSION 1.8)
+project(modeminfo VERSION ${VERSION}
         DESCRIPTION "The ModemInfo was specially developed for the luci-app-modeminfo backend.\
                     Goal of the project is to provide a user-friendly interface\
                     for receiving information from 3G/LTE dongle.")

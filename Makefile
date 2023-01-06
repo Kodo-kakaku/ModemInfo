@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=ModemInfo
-PKG_VERSION:=1.7
+PKG_NAME:=modeminfo
+PKG_VERSION:=1.8
 PKG_RELEASE:=1
 
 PKG_MAINTAINER:=Vladislav Kadulin <spanky@yandex.ru>
@@ -15,7 +15,7 @@ define Package/$(PKG_NAME)
         SECTION:=utils
         DEFAULT:=y
         CATEGORY:=Utilities
-        TITLE:=The $(PKG_NAME) was specially developed for the luci-app-modeminfo backend.
+        TITLE:=The $(PKG_NAME) was developed for luci-app-modeminfo backend.
         DEPENDS:=$(DRV_DEPENDS) +libstdcpp +cJSON +glib2 +libqmi
 endef
 
@@ -25,7 +25,7 @@ endef
 
 define Build/Prepare
         mkdir -p $(PKG_BUILD_DIR)
-        $(CP) ./$(PKG_NAME)/* $(PKG_BUILD_DIR)/
+        $(CP) ./build/* $(PKG_BUILD_DIR)/
 endef
 
 define Package/$(PKG_NAME)/install
