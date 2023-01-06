@@ -12,29 +12,20 @@ To work in this mode, you must specify the name of the mode and the port. This i
 ```
 For example:
 ./ModemInfo --qmi -d /dev/cdc-wdm0
-{"imei":"0000000000000000","manufacturer":"Quectel","model":"EP06-E","firmware":"EP06ELAR04A04M4G","iccid":"-","reg":"registered", ...etc}
+{"imei":"xxxxx","manufacturer":"Quectel","model":"EP06-E","firmware":"EP06ELAR04A04M4G","iccid":"-","reg":"registered", ...etc}
 ```
 ### AT mode
 It 's a little more complicated here ... as I have already written, due to compatibility issues with different vendors, there is no convenient scalable solution. This solution does not solve these problems, although it is a more flexible solution. So, to work with your modem, we need to create a JSON file with commands for this modem (there is an example file in the examples), this will allow us to analyze this file and execute these commands, the result of execution will be JSON, which will put the answers to the places of requests, everything is simple!
-```
-Json example:
-{
-  "device": [ "AT+CGMI", "AT+CGMM"],
-  "imei": "AT+CGSN",
-  "imsi": "AT+CIMI",
-  "iccid": "AT+ICCID",
-  "firmware": "AT+CGMR",
-  "chiptemp": "AT+QTEMP",
-  "csq": "AT+CSQ",
-  "cops": ["AT+COPS=3,2","AT+COPS?"],
-  "creg": "AT+CREG?",
-  "cereg": "AT+CEREG?",
-  "cgreg": "AT+CGREG?",
-  "any": ["AT+QENG=\"servingcell\"","AT+QCAINFO"]
-}
-```
+
 **Important:** 
 - it is not possible to remove or add fields now (it may appear in new versions) 
 If you don't want to use a field like **{ "chiptemp": "in+QTEMP"}** just make it empty, like this **{"chiptemp": ""}**. 
 - Each field can work with an array. For example, it happens that you need to execute some command before you get the data that you need, then you can use the following format **{"cops": ["In + COPS =3,2","In + COPS?"]}**. 
-- And of course, if you want to receive any other data, add them to the any field, for example **{"any": ["AT+QENG=\"servingcell\"", "AT+QCAINFO", "YOUR COMMAND"]}**.
+- And of course, if you want to receive any other data, add them to the "any" field, for example **{"any": ["AT+QENG=\"servingcell\"", "AT+QCAINFO", "YOUR COMMAND"]}**.
+
+After the file is ready, you will be able to execute the request!)
+```
+For example:
+./ModemInfo --at -d /dev/ttyUSB2 -f /www/quectel.json
+{"device":["Quectel","EP06"],"imei":"xxxxx","imsi":"xxxxx","iccid":"+ICCID: xxxx","firmware":"EP06ELAR04A04M4G","chiptemp":"+QTEMP: 31,31,30", ...etc}
+```
