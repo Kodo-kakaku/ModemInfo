@@ -36,6 +36,9 @@ For example:
 For example:
 ./ModemInfo --network --qmi -d /dev/cdc-wdm0
 ./ModemInfo --hardware --at -d /dev/ttyUSB2 -f /www/quectel.json
+
+HARDWARE -> { "device", "imei", "imsi", "iccid", "firmware", "chiptemp" }
+NETWORK  -> { "csq", "cops", "creg", "cereg", "cgreg", "any" }
 ```
 - And of course it's pretty to print!
 ```
