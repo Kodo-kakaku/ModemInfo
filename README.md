@@ -21,7 +21,8 @@ It 's a little more complicated here ... as I have already written, due to compa
 - it is not possible to remove or add fields now (it may appear in new versions) 
 If you don't want to use a field like **{ "chiptemp": "in+QTEMP"}** just make it empty, like this **{"chiptemp": ""}**. 
 - Each field can work with an array. For example, it happens that you need to execute some command before you get the data that you need, then you can use the following format **{"cops": ["In + COPS =3,2","In + COPS?"]}**. 
-- And of course, if you want to receive any other data, add them to the "any" field, for example **{"any": ["AT+QENG=\"servingcell\"", "AT+QCAINFO", "YOUR COMMAND"]}**.
+- And of course, if you want to receive any other data, add them to the "any" field, for example:
+**{"any": ["AT+QENG=\"servingcell\"", "AT+QCAINFO", "YOUR COMMAND"]}**.
 
 After the file is ready, you will be able to execute the request!)
 ```
