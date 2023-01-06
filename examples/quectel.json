@@ -1,0 +1,23 @@
+{
+  "device": [
+    "AT+CGMI",
+    "AT+CGMM"
+  ],
+  "imei": "AT+CGSN",
+  "imsi": "AT+CIMI",
+  "iccid": "AT+ICCID",
+  "firmware": "AT+CGMR",
+  "chiptemp": "AT+QTEMP",
+  "csq": "AT+CSQ",
+  "cops": [
+    "AT+COPS=3,2",
+    "AT+COPS?"
+  ],
+  "creg": "AT+CREG?",
+  "cereg": "AT+CEREG?",
+  "cgreg": "AT+CGREG?",
+  "any": [
+    "AT+QENG=\"servingcell\"",
+    "AT+QCAINFO"
+  ]
+}
