@@ -7,14 +7,14 @@ backend. Goal of the project is to provide a user-friendly interface for receivi
 The main task of the server part is to request data about the equipment and the modem signal. The problem with using modem is the lack of any standardization of commands for receiving data from the modem (each vendor uses its own commands). Now it is implemented to receive data from the modem using the serial port via AT commands or using the [QMI](https://en.wikipedia.org/wiki/Qualcomm_MSM_Interface) interface. The response is returned in a [JSON](https://www.json.org/json-en.html) format that can be studied, parsed with a script or sent to the user interface, now all information about the modem is available to you!
 
 ## How to use
-### Qmi mode
+### - Qmi mode
 To work in this mode, you must specify the name of the mode and the port. This is enough to get data from the modem!
 ```
 For example:
 ./ModemInfo --qmi -d /dev/cdc-wdm0
 {"imei":"xxxxx","manufacturer":"Quectel","model":"EP06-E","firmware":"EP06ELAR04A04M4G","iccid":"-","reg":"registered", ...etc}
 ```
-### AT mode
+### - AT mode
 It 's a little more complicated here ... as I have already written, due to compatibility issues with different vendors, there is no convenient scalable solution. This solution does not solve these problems, although it is a more flexible solution. So, to work with your modem, we need to create a JSON file with commands for this modem (there is an example file in the examples), this will allow us to analyze this file and execute these commands, the result of execution will be JSON, which will put the answers to the places of requests, everything is simple!
 
 **Important:** 
