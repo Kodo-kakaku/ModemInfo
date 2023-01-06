@@ -15,7 +15,7 @@ For example:
 {"imei":"xxxxx","manufacturer":"Quectel","model":"EP06-E","firmware":"EP06ELAR04A04M4G","iccid":"-","reg":"registered", ...etc}
 ```
 - ### AT mode
-It 's a little more complicated here ... as I have already written, due to compatibility issues with different vendors, there is no convenient scalable solution. This solution does not solve these problems, although it is a more flexible solution. So, to work with your modem, we need to create a JSON file with commands for this modem (there is an example file in the examples), this will allow us to analyze this file and execute these commands, the result of execution will be JSON, which will put the answers to the places of requests, everything is simple!
+It 's a little more complicated here ... as I have already written, due to compatibility issues with different vendors, there is no convenient scalable solution. This solution does not solve these problems, although it is a more flexible. So, to work with your modem, we need to create a JSON file with commands for this modem (there is an example file in the examples), this will allow us to analyze this file and execute these commands, the result of execution will be JSON, which will put the answers to the places of requests, everything is simple!
 
 **Important:** 
 - it is not possible to remove or add fields now (it may appear in new versions) 
