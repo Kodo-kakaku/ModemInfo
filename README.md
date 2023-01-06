@@ -26,6 +26,6 @@ If you don't want to use a field like **{ "chiptemp": "in+QTEMP"}** just make it
 After the file is ready, you will be able to execute the request!)
 ```
 For example:
-./ModemInfo --at -d /dev/ttyUSB2 -f /www/quectel.json
+./ModemInfo --at -d /dev/ttyUSB2 -f /usr/share/quectel.json
 {"device":["Quectel","EP06"],"imei":"xxxxx","imsi":"xxxxx","iccid":"+ICCID: xxxx","firmware":"EP06ELAR04A04M4G","chiptemp":"+QTEMP: 31,31,30", ...etc}
 ```
