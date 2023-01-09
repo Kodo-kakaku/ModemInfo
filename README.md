@@ -11,7 +11,7 @@ The main task of the server part is to request data about the equipment and the 
 To work in this mode, you must specify the name of the mode and the port. This is enough to get data from the modem!
 ```
 For example:
-./ModemInfo --qmi -d /dev/cdc-wdm0
+./modeminfo --qmi -d /dev/cdc-wdm0
 {"imei":"xxxxx","manufacturer":"Quectel","model":"EP06-E","firmware":"EP06ELAR04A04M4G","iccid":"-","reg":"registered", ...etc}
 ```
 - ### AT mode
@@ -27,7 +27,7 @@ If you don't want to use a field like **{ "chiptemp": "in+QTEMP"}** just make it
 After the file is ready, you will be able to execute the request!)
 ```
 For example:
-./ModemInfo --at -d /dev/ttyUSB2 -f /usr/share/quectel.json
+./modeminfo --at -d /dev/ttyUSB2 -f /usr/share/quectel.json
 {"device":["Quectel","EP06"],"imei":"xxxxx","imsi":"xxxxx","iccid":"+ICCID: xxxx","firmware":"EP06ELAR04A04M4G","chiptemp":"+QTEMP: 31,31,30", ...etc}
 ```
 
@@ -35,8 +35,8 @@ For example:
 - You can request data about hardware or network separately!
 ```
 For example:
-./ModemInfo --network --qmi -d /dev/cdc-wdm0
-./ModemInfo --hardware --at -d /dev/ttyUSB2 -f /www/quectel.json
+./modeminfo --network --qmi -d /dev/cdc-wdm0
+./modeminfo --hardware --at -d /dev/ttyUSB2 -f /usr/share/quectel.json
 
 HARDWARE -> { "device", "imei", "imsi", "iccid", "firmware", "chiptemp" }
 NETWORK  -> { "csq", "cops", "creg", "cereg", "cgreg", "any" }
@@ -44,8 +44,8 @@ NETWORK  -> { "csq", "cops", "creg", "cereg", "cgreg", "any" }
 - And of course it's pretty to print!
 ```
 For example:
-./ModemInfo --pretty --network --qmi -d /dev/cdc-wdm0
-./ModemInfo -p --hardware --at -d /dev/ttyUSB2 -f /www/quectel.json
+./modeminfo --pretty --network --qmi -d /dev/cdc-wdm0
+./modeminfo -p --hardware --at -d /dev/ttyUSB2 -f /usr/share/quectel.json
 ```
 ## How to build
 ```
